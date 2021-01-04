@@ -1,0 +1,1 @@
+<a href="{{route('producto.add',$codebar)}}"><button class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i></button></a>

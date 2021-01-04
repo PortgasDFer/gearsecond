@@ -1,0 +1,1 @@
+<a href="{{route('producto.edit',$codebar)}}"><button class="btn btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i></button></a>

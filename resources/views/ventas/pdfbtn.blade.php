@@ -1,0 +1,1 @@
+<a href="{{route('pdfv.show',$folio)}}"><button class="btn btn-primary"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></button></a>
