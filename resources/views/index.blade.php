@@ -33,7 +33,7 @@
 <body>
   <style>
   body {
-    background: url('/bg.png') no-repeat center center fixed;
+    background: url('/bg.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -79,7 +79,7 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-6">
-          <p><h1 class="mt-5 display-4" style="color:white" >GEAR SECOND</h1><small  style="color:white" class="bg-primary">V 1.0</small></p>
+          <p><h1 class="mt-5 display-4" style="color:white" >GEAR SECOND </h1><span class="badge badge-primary">V 2.1</span></p>
           <p style="color:white">Inventario y control del negocio al alcance de tu mano.</p>
         </div>
       </div>
