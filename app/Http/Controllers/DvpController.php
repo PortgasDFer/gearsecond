@@ -57,6 +57,30 @@ class DvpController extends Controller
         $existente=$producto->total;
         $productos=Producto::all();
         $datos=Venta::find($folio);
+        
+        $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+
+        foreach ($tabla as $t) {
+            if($t->codebar==$codebar){
+                $dvp=Dvp::find($t->id);
+                $dvp->cantidad+=1;
+                $dvp->save();
+                $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+                alert()->success('Straw Hat System', 'Producto agregado');
+            return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+            }
+        }
+
         $dvp=new Dvp();
  		$restante=$request->input('cantidad');
         $dvp->folio_v=$request->input('folio');

@@ -49,6 +49,14 @@
                 <div class="card-body">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa fa-cart-plus" aria-hidden="true"></i> Agregar producto</button>
                     <br>
+                    <div class="row">
+                      <div class="col">
+                        <form action="" class="form-group">
+                          <label for="">Ingrese Código de Barras</label>
+                          <input type="text" class="form-control" autofocus>
+                        </form>
+                      </div>
+                    </div>
                     <hr>
                        <div class="row">
                            <div class="col justify-content-center">
