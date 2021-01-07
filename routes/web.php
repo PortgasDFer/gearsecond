@@ -71,6 +71,7 @@ Route::post('/altamasiva','ProductosController@import')->name('import.productos'
 Route::resource('/venta','VentasController');
 Route::get('/indexventas/','VentasController@indventas')->name('ventas.indexof');
 Route::resource('/dvp','DvpController');
+Route::post('/insert-ajax','DvpController@insertAjax')->name('insert.ajax');
 
 Route::get('api/ventas',function(){
 	return datatables()

@@ -192,6 +192,128 @@ class DvpController extends Controller
 
     }
 
+    public function insertAjax(Request $request)
+    {
+        $folio=$request->input('folio');
+        $deudores=Deudor::all();
+        $codebar=$request->input('codebar');
+        $producto=Producto::find($codebar);
+        $existente=$producto->total;
+        $productos=Producto::all();
+        $datos=Venta::find($folio);
+        
+        $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+
+        foreach ($tabla as $t) {
+            if($t->codebar==$codebar){
+                $dvp=Dvp::find($t->id);
+                $dvp->cantidad+=1;
+                $dvp->save();
+                $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+                alert()->success('Straw Hat System', 'Producto agregado');
+                return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+            }
+        }
+
+        $dvp=new Dvp();
+        $restante=$request->input('cantidad');
+        $dvp->folio_v=$request->input('folio');
+        $dvp->codebar=$request->input('codebar');
+        $producto=Producto::find($codebar);
+        $dvp->precio=$producto->pventa;
+        $dvp->unidad=$producto->unidad;
+        $dvp->cantidad=1;
+
+        $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','dvp.unidad','productos.codebar')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+
+        /*Obtenemos la cantidad en inventario del producto*/
+        if($producto->unidad=="Kg"){
+            if($dvp->unidad=="Gr"){
+                $gramos=$producto->total*1000;
+                $existente=$gramos;
+            }elseif($dvp->unidad=="Gr"){
+                $existente=$producto->total;
+            }
+        }elseif($producto->unidad=="Gr"){
+            if($dvp->unidad=="Kg"){
+                $kilogramos=$producto->total/1000;
+                $existente=$kilogramos;
+            }elseif($dvp->unidad="Gr"){
+                $existente=$producto->total;
+            }
+        }elseif($producto->unidad=="Pza"){
+            if($dvp->unidad=="Kg"){
+                alert()->error('Straw Hat System', 'El producto solicitado no tiene unidad de medida a Granel.');
+                return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+            }elseif($dvp->unidad=="Gr"){
+                alert()->error('Straw Hat System', 'El producto solicitado no tiene unidad de medida a Granel.');
+                return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+            }elseif($dvp->unidad=="Pza"){
+                $existente=$producto->total;
+            }   
+        }
+        /*Consultamos que contemos con más cantidad que la que se vendera*/
+         if($existente<$restante){
+            /*Si no contamos con mayor cantidad el sistema arrojará un mensaje de alerta y no permitira agregar el producto.*/
+            alert()->error('Straw Hat System', 'No cuenta con esa cantidad de producto');
+            return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+         }elseif($existente>=$restante){
+            /*Si hay mayor cantidad en inventario que la que se vendera comprobamos las unidades de medida y ejecutamos las formulas de conversión correspondientes.*/
+            if($producto->unidad=="Kg"){
+                if($dvp->unidad=="Gr"){
+                    $gramos=$producto->total*1000;
+                    $total=$gramos-$restante;
+                    $producto->total=$total/1000;
+                    $producto->save();
+                }elseif($dvp->unidad=="Kg"){
+                    $producto->total=$existente-$restante;
+                    $producto->save();
+                }
+            }elseif($producto->unidad=="Gr"){
+                if($dvp->unidad=="Kg"){
+                    $kilogramos=$producto->total/1000;
+                    $total=$kilogramos-$restante;
+                    $producto->total=$total*1000;
+                    $producto->save();
+                }elseif($dvp->unidad=="Gr"){
+                    $producto->total=$existente-$restante;
+                    $producto->save();
+                }
+            }elseif($producto->unidad=="Pza"){
+                $producto->total=$existente-$restante;
+                $producto->save();
+            }
+         }  
+        if(empty($dvp->precio)){
+            /*En caso de no agregar precio al producto a la hora de realizar la nota de venta, se obtendra el precio previamente asignado al producto.*/
+            $dvp->precio=$producto->pventa;
+        }
+        $dvp->save();
+        $tabla =    DB::table('ventas')
+                    ->join('dvp','ventas.folio','=','dvp.folio_v')
+                    ->join('productos','productos.codebar','=','dvp.codebar')
+                    ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
+                    ->where('ventas.folio','=',$folio)
+                    ->get();
+        alert()->success('Straw Hat System', 'Producto agregado');
+        return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+    }
+
     /**
      * Display the specified resource.
      *

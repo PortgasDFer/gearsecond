@@ -51,9 +51,11 @@
                     <br>
                     <div class="row">
                       <div class="col">
-                        <form action="" class="form-group">
+                        <form action="/insert-ajax" class="form-group" method="POST">
+                          @csrf
                           <label for="">Ingrese Código de Barras</label>
-                          <input type="text" class="form-control" autofocus>
+                          <input type="text" class="form-control" autofocus name="codebar">
+                          <input type="hidden" name="folio" value="{{$datos->folio}}">
                         </form>
                       </div>
                     </div>
