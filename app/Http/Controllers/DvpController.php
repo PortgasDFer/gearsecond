@@ -310,8 +310,8 @@ class DvpController extends Controller
                     ->select('productos.desc','dvp.cantidad','dvp.precio','dvp.id','ventas.folio','productos.codebar','dvp.unidad')
                     ->where('ventas.folio','=',$folio)
                     ->get();
-        alert()->success('Straw Hat System', 'Producto agregado');
-        return view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+        $htmlView = view('ventas.agregar',compact('datos','tabla','productos','deudores'));
+        return response()->json(array('success' => true, 'html'=>$htmlView));
     }
 
     /**

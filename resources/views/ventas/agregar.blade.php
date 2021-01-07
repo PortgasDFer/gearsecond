@@ -47,14 +47,15 @@
                         </form>      
                 </div>
                 <div class="card-body">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa fa-cart-plus" aria-hidden="true"></i> Agregar producto</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa fa-cart-plus" aria-hidden="true"></i> 		Agregar producto
+                    </button>
                     <br>
                     <div class="row">
                       <div class="col">
                         <form action="/insert-ajax" class="form-group" method="POST">
                           @csrf
                           <label for="">Ingrese Código de Barras</label>
-                          <input type="text" class="form-control" autofocus name="codebar">
+                          <input type="text" class="form-control" autofocus name="codebar" id="codebar-insert">
                           <input type="hidden" name="folio" value="{{$datos->folio}}">
                         </form>
                       </div>
@@ -290,5 +291,40 @@
 
       })
     }
+</script>
+<script language="javascript">
+	$("#codebar-insert").keyup(function(){ 
+		var codebar=$("#codebar").val()
+		var folio=$("#folio").val()
+		if(codebar!=""){
+			$.ajaxSetup({
+		        headers: {
+		            "_token": $("meta[name='csrf-token']").attr("content")
+		        }
+		    });
+			$.ajax({
+            url: '/insert-ajax',
+            type: 'POST',
+            data:{ 
+            		codebar:codebar,
+            		folio:folio
+            	},
+            dataType: "json",
+            cache: false,
+            contentType: "application/json",
+             success:function(response){
+				if(response.success){
+				  alert(response.message)
+				  location.reload(); //Message come from controller
+				}else{
+				  alert("Error")
+				}
+           	},
+            error: function (xhr, status) {
+
+            },
+        });
+		}
+	});
 </script>
 @endsection
